@@ -25,10 +25,22 @@ void setup() {
   song1.loop(0);
 } //End setup
 //
-void draw() {} //End draw
+void draw() {
+//note: logical operators could be nested IFs
+if ( song1.isLooping() && song1.loopCount()!=-1) println("there are", song1.loopCount(), "loops left");
+if ( song1.isLooping() && song1.loopCount()==-1) println("looping infinitely");
+if ( song1.isLooping() && song1.isPlaying() ) println("Play Once");
+} //End draw
 //
 void keyPressed() {
-  song1.loop(0);
+  if ( key=='P' || key=='p' ) song1.play();
+  //
+  if(key=='1' || key=='9'){
+    String keystr = String.valueOf(key);
+    println("keystring");
+      int loopNum = int(keystr);
+    song1.loop(loopNum);
+  }
   //if () .play(); //Parameter is milli-seconds from start of audio file to start playing (illustrate with examples)
 } //End keyPressed
 //
