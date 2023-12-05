@@ -40,6 +40,16 @@ void keyPressed() {
     println("keystring");
       int loopNum = int(keystr);
     song1.loop(loopNum);
+    if(key=='M' || key=='m') { //mute function, stops sound not file
+      if (song1.isMuted();) {
+      song1.unmute();
+      } else {
+      song1.mute();
+      }
+      //
+      if(key=='R' || key=='r') song1.skip(-1000);
+      //
+      if(key=='F' || key=='f') song1.skip(1000);
   }
   //if () .play(); //Parameter is milli-seconds from start of audio file to start playing (illustrate with examples)
 } //End keyPressed
