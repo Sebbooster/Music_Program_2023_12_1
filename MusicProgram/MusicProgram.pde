@@ -52,6 +52,13 @@ void keyPressed() {
       if(key=='F' || key=='f') song1.skip(0);
   }
   //if () .play(); //Parameter is milli-seconds from start of audio file to start playing (illustrate with examples)
+  if (key=='S' || if key=='s') {
+    if(song1.isPlaying() ) {
+      song1.pause();
+    } else {
+      song1.rewind();
+    }
+  }
 } //End keyPressed
 //
 void mousePressed() {} //End mousePressed
