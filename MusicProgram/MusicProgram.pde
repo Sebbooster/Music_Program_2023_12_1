@@ -47,9 +47,9 @@ void keyPressed() {
       song1.mute();
       }
       //
-      if(key=='R' || key=='r') song1.skip(-1000);
+      if(key=='R' || key=='r') song1.skip(1000);
       //
-      if(key=='F' || key=='f') song1.skip(1000);
+      if(key=='F' || key=='f') song1.skip(0);
   }
   //if () .play(); //Parameter is milli-seconds from start of audio file to start playing (illustrate with examples)
 } //End keyPressed
