@@ -9,6 +9,7 @@ import ddf.minim.ugens.*;
 //Global Variables
 Minim minim; //creates object to access all functions
 AudioPlayer song1; //creates "Play List" variable holding extensions WAV, AIFF, AU, SND, and MP3
+AudioMetaData songMetaData1;
 //
 void setup() {
   //size() or fullScreen()
@@ -22,7 +23,7 @@ void setup() {
   println(path);
   
   song1 = minim.loadFile( path );
-  song1.loop(0);
+  songMetaData1 = song1.getMetaData();
 } //End setup
 //
 void draw() {
@@ -30,6 +31,27 @@ void draw() {
 if ( song1.isLooping() && song1.loopCount()!=-1) println("there are", song1.loopCount(), "loops left");
 if ( song1.isLooping() && song1.loopCount()==-1) println("looping infinitely");
 if ( song1.isLooping() && song1.isPlaying() ) println("Play Once");
+
+println("File Name", songMetaData1.fileName() );
+//
+println("Song Length (miliseconds)", songMetaData1.length() );
+println("Song Length (seconds)", songMetaData1.length()/1000 );
+println("Song Length (minutes and seconds)", songMetaData1.length()/1000/60, "minutes", songMetaData1.length()/1000 - ( (songMetaData1.length()/1000/60)*60 ), "seconds" );
+println("Title", songMetaData1.title() );
+println("Author", songMetaData1.author() );
+println("Composer", songMetaData1.composer() );
+println("Orchestra", songMetaData1.orchestra() );
+println("Album", songMetaData1.album() );
+println("Disk", songMetaData1.disc() );
+println("Publisher", songMetaData1.publisher() );
+println("Date Released", songMetaData1.date() );
+println("Copyright", songMetaData1.copyright() );
+println("Comments", songMetaData1.comment() );
+println("Lyrics", songMetaData1.lyrics() );
+println("Track", songMetaData1.track() );
+println("Genre", songMetaData1.genre() );
+println("Encoded", songMetaData1.encoded() );
+
 } //End draw
 //
 void keyPressed() {
@@ -41,9 +63,10 @@ void keyPressed() {
       int loopNum = int(keystr);
     song1.loop(loopNum);
     if(key=='M' || key=='m') { //mute function, stops sound not file
-      if (song1.isMuted();) {
+      if (song1.isMuted()) {
       song1.unmute();
-      } else {
+      } 
+    } else {
       song1.mute();
       }
       //
@@ -52,15 +75,17 @@ void keyPressed() {
       if(key=='F' || key=='f') song1.skip(0);
   }
   //if () .play(); //Parameter is milli-seconds from start of audio file to start playing (illustrate with examples)
-  if (key=='S' || if key=='s') {
+  if (key=='S' || key=='s') {
     if(song1.isPlaying() ) {
       song1.pause();
-    } else {
+    } 
+  } else {
       song1.rewind();
     }
-  }
 } //End keyPressed
 //
-void mousePressed() {} //End mousePressed
+void mousePressed() {
+
+} //End mousePressed
 //
 //End MAIN Program
