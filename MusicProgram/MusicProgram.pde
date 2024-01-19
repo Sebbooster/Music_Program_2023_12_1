@@ -9,97 +9,162 @@ import ddf.minim.spi.*;
 import ddf.minim.ugens.*;
 //
 //Global Variables
-Minim minim; //creates object to access all functions
-int numberOfSongs = 8;
-int numberSoundEffects = 8;
-AudioPlayer[] song = new AudioPlayer [numberOfSongs]; //creates "Play List" variable holding extensions WAV, AIFF, AU, SND, and MP3
-AudioPlayer[] soundEffect= new AudioPlayer [numberSoundEffects];
-AudioMetaData[] songMetaData = new AudioMetaData [numberOfSongs];
+PImage Explosion, Insom, BGImage;
+File musicFolder;
+File effectFolder;
+Minim minim; 
+int appWidth, appHeight;
+int numberOfSongs = 2, currentSong=0;
+int numberSoundEffects = 2;
+AudioPlayer[] song = new AudioPlayer[numberOfSongs]; //song is now similar to song1
+AudioMetaData[] songMetaData = new AudioMetaData[numberOfSongs]; //same as above
+AudioMetaData[] soundEffectMetaData = new AudioMetaData [numberSoundEffects];
+AudioPlayer[] soundEffect = new AudioPlayer[ numberSoundEffects ];
 PFont font;
 color ink=#000000;
+Boolean changeState=false, stopBoolean=false, pauseBoolean=false, startB=false, pause=false, FB=false, PB=false;
+
 //
 void setup() {
+  appWidth = displayWidth;
+  appHeight = displayHeight;
+  fullScreen();
   //size() or fullScreen()
   //Display Algorithm
-  minim = new Minim(this); //load from data directory, loadFile should also load from project folder, like loadImage
-  String Boom = "VineBoom.mp3";
+  minim = new Minim(this);//creates object to access all functions
+  //
+  String pathway = "MusicUsed/DownloadedMusic/";
   String extension = ".mp3";
-  String pathway = "MusicUsed/DownloadedMusic/"; //Relative Path
-  String path = sketchPath( pathway + Boom ); //Absolute Path
+  String pathsong = sketchPath (pathway);
+  musicFolder = new File(pathsong);
+  int musicFileCount = musicFolder.list().length;
+  File[] musicFiles = musicFolder.listFiles(); //String of Full Directies
+  String[] songFilePathway = new String[musicFileCount];
+  for ( int i = 0; i < musicFiles.length; i++ ) {
+    songFilePathway[i] = ( musicFiles[i].toString() );
+  }
+    numberOfSongs = musicFileCount; //Placeholder Only, reexecute lines after fileCount Known
+  song = new AudioPlayer[numberOfSongs]; //song is now similar to song1
+  printArray(song);
+  songMetaData = new AudioMetaData[numberOfSongs]; //same as above
+  for ( int i=0; i<musicFileCount; i++ ) {
+    printArray(song);
+    song[i]= minim.loadFile( songFilePathway[i] );
+    songMetaData[i] = song[i].getMetaData();
+  }
   // See: https://poanchen.github.io/blog/2016/11/15/how-to-add-background-music-in-processing-3.0
   //println(path);
-  
-  song[0] = minim.loadFile( path );
-  songMetaData[0] = song[0].getMetaData();
+  /*
+  song[currentSong] = minim.loadFile( path );
+  songMetaData[currentSong] = song[currentSong].getMetaData();\
+  */
   font = createFont("Ink Free", 55);
 } //End setup
 //
 void draw() {
 //note: logical operators could be nested IFs
-if ( song[0].isLooping() && song[0].loopCount()!=-1) println("there are", song[0].loopCount(), "loops left");
-if ( song[0].isLooping() && song[0].loopCount()==-1) println("looping infinitely");
-if ( song[0].isLooping() && song[0].isPlaying() ) println("Play Once");
-
-println("File Name", songMetaData[0].fileName() );
+if ( song[currentSong].isLooping() && song[currentSong].loopCount()!=-1) println("there are", song[currentSong].loopCount(), "loops left");
+if ( song[currentSong].isLooping() && song[currentSong].loopCount()==-1) println("looping infinitely");
+if ( song[currentSong].isLooping() && song[currentSong].isPlaying() ) println("Play Once");
 //
-println("Song Length (miliseconds)", songMetaData[0].length() );
-println("Song Length (seconds)", songMetaData[0].length()/1000 );
-println("Song Length (minutes and seconds)", songMetaData[0].length()/1000/60, "minutes", songMetaData[0].length()/1000 - ( (songMetaData[0].length()/1000/60)*60 ), "seconds" );
-println("Title", songMetaData[0].title() );
-println("Author", songMetaData[0].author() );
-println("Composer", songMetaData[0].composer() );
-println("Orchestra", songMetaData[0].orchestra() );
-println("Album", songMetaData[0].album() );
-println("Disk", songMetaData[0].disc() );
-println("Publisher", songMetaData[0].publisher() );
-println("Date Released", songMetaData[0].date() );
-println("Copyright", songMetaData[0].copyright() );
-println("Comments", songMetaData[0].comment() );
-println("Lyrics", songMetaData[0].lyrics() );
-println("Track", songMetaData[0].track() );
-println("Genre", songMetaData[0].genre() );
-println("Encoded", songMetaData[0].encoded() );
 //
 //songMetaData1.title()
 //
-
-rect(width*1/4, height*0, width*1/2, height*3/10);
+noFill();
+noStroke();
+rect(appWidth*1/4, appHeight*5/8, appWidth*1/2, appHeight*3/10);
 fill(ink);
 textAlign(CENTER, CENTER);
-int size = 10;
+int size = 55;
 textFont(font, size);
-text(songMetaData[0].title(), width*1/4, height*0, width*1/2, height*3/10);
+text(songMetaData[currentSong].title(), appWidth*1/4, appHeight*5/8, appWidth*1/2, appHeight*3/10);
 fill(255);
+if ( song[currentSong].isPlaying()==true ) {
+    if ( stopBoolean==true || pauseBoolean==true ) {
+      song[currentSong].pause();
+    }
+   if ( stopBoolean==true ) song[currentSong].rewind();
+  } else {
+    if ( changeState==false ) {
+      song[currentSong].rewind();
+      if (currentSong==numberOfSongs-1) {
+        currentSong=0;
+      } else {
+        currentSong = currentSong + 1; //currentSong--; currentSong-=1}
+      }
+      song[currentSong].play();
+    }
+      song[currentSong].play();
+    if ( stopBoolean==false && pauseBoolean==false && changeState==true ) {
+      song[currentSong].play();
+      changeState=false;
+      //println("hereD5", song[currentSong].isPlaying(), stopBoolean, pauseBoolean, changeState);
+    }
+    if ( pauseBoolean==false && stopBoolean==false  && changeState==true) {
+      song[currentSong].play();
+      changeState=false;
+    } else {
+      if ( changeState==true ) {
+        if (pauseBoolean==true && stopBoolean==false ) {
+        if (song[currentSong].isPlaying()) {
+          song[currentSong].pause();
+        }
+        }
+       }
+      }
+     }
+     //
+     //
+      SongImages();
+     SongProperties();
 } //End draw
 //
 void keyPressed() {
-  if ( key=='P' || key=='p' ) song[0].play();
+  if ( key=='P' || key=='p' ) song[currentSong].play();
   //
+  if ( key=='M' || key=='m' ) {
+    changeState=true;
+    if ( pauseBoolean==false ) {
+      pauseBoolean=true;
+      println("herek2", pauseBoolean);
+    } else {
+      pauseBoolean=false;
+      println("herek3", pauseBoolean);
+      //playList[currentSong].play();
+    }
+    if (  stopBoolean==true ) {
+      stopBoolean=false;
+    }
+    println ( "herek4", song[currentSong].isPlaying(), pauseBoolean, stopBoolean, changeState );
+  }
+  //
+  /*
   if(key=='1' || key=='9'){
     String keystr = String.valueOf(key);
     println("keystring");
       int loopNum = int(keystr);
-    song[0].loop(loopNum);
+    song[currentSong].loop(loopNum);
     if(key=='M' || key=='m') { //mute function, stops sound not file
-      if (song[0].isMuted()) {
-      song[0].unmute();
+      if (song[currentSong].isMuted()) {
+      song[currentSong].unmute();
       } 
     } else {
-      song[0].mute();
+      song[currentSong].mute();
       }
       //
-      if(key=='R' || key=='r') song[0].skip(1000);
+      if(key=='R' || key=='r') song[currentSong].skip(1000);
       //
-      if(key=='F' || key=='f') song[0].skip(0);
+      if(key=='F' || key=='f') song[currentSong].skip(0);
   }
   //if () .play(); //Parameter is milli-seconds from start of audio file to start playing (illustrate with examples)
   if (key=='S' || key=='s') {
-    if(song[0].isPlaying() ) {
-      song[0].pause();
+    if(song[currentSong].isPlaying() ) {
+      song[currentSong].pause();
     } 
   } else {
-      song[0].rewind();
+      song[currentSong].rewind();
     }
+    */
 } //End keyPressed
 //
 void mousePressed() {
